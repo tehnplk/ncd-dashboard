@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Carb {
+  id            Int      @id @default(autoincrement())
+  hoscode       String   @unique
+  hosname       String
+  hostype       String
+  tmb_code      String
+  tmb_name      String
+  amp_code      String
+  amp_name      String
+  person_target Float
+  person_carb   Float
+  percentage    Float
+  person_diff   Float
+  updated_at    DateTime @default(now())
+}
+
+model Camp {
+  id         Int      @id @default(autoincrement())
+  amp_code   String   @unique
+  amp_name   String
+  updated_at DateTime @default(now())
+}
+
+model Chospital {
+  id            Int      @id @default(autoincrement())
+  hoscode       String   @unique
+  hosname       String
+  hostype       String
+  tmb_code      String
+  tmb_name      String
+  amp_code      String
+  amp_name      String
+  flag_activate Boolean  @default(true)
+  updated_at    DateTime @default(now())
+
+  @@index([hoscode])
+}
+
+model Prevention {
+  id                Int      @id @default(autoincrement())
+  hoscode           String   @unique
+  hosname           String
+  hostype           String
+  tmb_code          String
+  tmb_name          String
+  amp_code          String
+  amp_name          String
+  total_officer     Int
+  total_pop         Int
+  osm_provider      Int
+  officer_provider  Int
+  target_pop        Int
+  prevention_visit  Int
+  normal_pop        Int
+  risk_pop          Int
+  sick_pop          Int
+  trained Int
+  risk_to_normal    Int
+  weight_reduce     Float
+  weight_reduce_avg Float
+  updated_at        DateTime @default(now())
+}
+
+model Remission {
+  id                      Int     @id @default(autoincrement())  // Primary Key
+  hoscode                 String  @unique                        // รหัสหน่วยบริการ
+  hosname                 String                                 // ชื่อหน่วยบริการ
+  hostype                 String                                 // ประเภทหน่วยบริการ
+  tmb_code                String                                 // รหัสตำบล
+  tmb_name                String                                 // ชื่อตำบล
+  amp_code                String                                 // รหัสอำเภอ
+  amp_name                String                                 // ชื่ออำเภอ
+
+  trained                 Int                                    // ผู้ป่วยเข้ารับการอบรม
+  ncds_remission          Int                                    // ผู้ป่วยเข้าเกณฑ์ NCDs Remission
+  stopped_medication      Int                                    // ผู้ป่วยที่หยุดยาได้
+
+  reduced_1               Int                                    // ลดยา 1 ตัว
+  reduced_2               Int
+  reduced_3               Int
+  reduced_4               Int
+  reduced_5               Int
+  reduced_6               Int
+  reduced_7               Int
+  reduced_8               Int
+  reduced_n               Int                                    // ลดยา > 8 ตัว (เปลี่ยนจาก reduced_more_than_8)
+
+  same_medication         Int                                    // รับยาเท่าเดิม
+  increased_medication    Int                                    // ต้องเพิ่มยา
+  pending_evaluation      Int                                    // อยู่ระหว่างการประเมิน
+  lost_followup           Int                                    // ขาดนัด/ติดตามไม่ได้
+}
+
