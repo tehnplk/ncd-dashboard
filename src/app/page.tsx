@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { FiUsers, FiActivity, FiCheckCircle, FiAlertCircle, FiAlertTriangle, FiAward, FiBarChart2, FiFileText, FiUser, FiPlus, FiX } from 'react-icons/fi';
 
 interface SubDistrictData {
@@ -109,11 +110,11 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <div className="p-1 rounded-full bg-blue-100 text-blue-600 text-xl mr-2">
-                🍚
+                <Image src="/icon/rice.png" alt="Rice" width={24} height={24} />
               </div>
-              <p className="text-gray-500 text-base font-medium">นับคาร์บ</p>
+              <p className="text-gray-500 text-lg font-bold">นับคาร์บ</p>
             </div>
-            <p className="text-2xl font-bold">{summary.carbPercentage}%</p>
+            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">{summary.carbPercentage}%</p>
           </div>
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -132,12 +133,11 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <div className="p-1 rounded-full bg-green-100 text-green-600 text-xl mr-2 relative">
-                <FiUser size={16} className="relative z-10" />
-                <FiPlus size={10} className="absolute -bottom-0.5 -right-0.5 text-green-600 font-bold" />
+                <Image src="/icon/medical-report.png" alt="Medical Report" width={24} height={24} />
               </div>
-              <p className="text-gray-500 text-base font-medium">คัดกรอง</p>
+              <p className="text-gray-500 text-lg font-bold">คัดกรอง</p>
             </div>
-            <p className="text-2xl font-bold">{summary.screenedPercentage}%</p>
+            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">{summary.screenedPercentage}%</p>
           </div>
           <div className="mt-3 pt-3 border-t border-gray-100">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -155,7 +155,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-gray-600 text-base font-semibold">ผลการคัดกรอง</p>
+              <p className="text-gray-600 text-lg font-bold">ผลการคัดกรอง</p>
             </div>
             <div className="p-2 rounded-full bg-purple-100 text-purple-600">
               <FiFileText size={20} />
@@ -199,11 +199,11 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <div className="p-1 rounded-full bg-indigo-100 text-indigo-600 text-xl mr-2">
-                <FiUsers size={18} />
+                <Image src="/icon/workshop.png" alt="Workshop" width={24} height={24} />
               </div>
-              <p className="text-gray-500 text-base font-medium">อบรมปรับเปลี่ยนพฤติกรรม</p>
+              <p className="text-gray-500 text-lg font-bold">อบรมปรับเปลี่ยนพฤติกรรม</p>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
               {summary.trainedCount.toLocaleString()} <span className="text-lg">คน</span>
             </p>
           </div>
@@ -212,7 +212,7 @@ export default function Dashboard() {
               {summary.subDistricts.map((district, index) => (
                 <div key={`trained-${index}`} className="bg-indigo-50 p-2 rounded text-center">
                   <p className="text-xs text-indigo-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1 text-indigo-800">{district.value}</p>
+                  <p className="text-sm font-semibold mt-1 text-indigo-800">{Math.floor(district.value)}</p>
                 </div>
               ))}
             </div>
@@ -224,11 +224,11 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <div className="p-1 rounded-full bg-teal-100 text-teal-600 text-xl mr-2">
-                <FiCheckCircle size={18} />
+                <Image src="/icon/person-check.png" alt="Person Check" width={24} height={24} />
               </div>
-              <p className="text-gray-500 text-base font-medium">กลับเป็นปกติ</p>
+              <p className="text-gray-500 text-lg font-bold">กลับเป็นปกติ</p>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
               {summary.recoveredCount.toLocaleString()} <span className="text-lg">คน</span>
             </p>
           </div>
@@ -237,7 +237,7 @@ export default function Dashboard() {
               {summary.subDistricts.map((district, index) => (
                 <div key={`recovered-${index}`} className="bg-teal-50 p-2 rounded text-center">
                   <p className="text-xs text-teal-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1 text-teal-800">{district.value}</p>
+                  <p className="text-sm font-semibold mt-1 text-teal-800">{Math.floor(district.value)}</p>
                 </div>
               ))}
             </div>
@@ -249,9 +249,9 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <div className="p-1 rounded-full bg-amber-100 text-amber-600 text-xl mr-2">
-                ⚖️
+                <Image src="/icon/bw-scale.png" alt="Weight Scale" width={24} height={24} />
               </div>
-              <p className="text-gray-600 text-base font-semibold">น้ำหนักลดลง</p>
+              <p className="text-gray-600 text-lg font-bold">น้ำหนักลดลง</p>
             </div>
           </div>
           
@@ -259,7 +259,7 @@ export default function Dashboard() {
             {/* รวม */}
             <div className="bg-amber-50 p-3 rounded-lg">
               <p className="text-amber-600 text-sm font-medium">รวม</p>
-              <p className="text-xl font-bold mt-1">
+              <p className="text-2xl font-bold mt-1 bg-gray-100 p-2 rounded">
                 {summary.totalWeightLoss.toLocaleString()} <span className="text-base">กก.</span>
               </p>
             </div>
@@ -267,7 +267,7 @@ export default function Dashboard() {
             {/* เฉลี่ย */}
             <div className="bg-amber-50 p-3 rounded-lg">
               <p className="text-amber-600 text-sm font-medium">เฉลี่ย</p>
-              <p className="text-xl font-bold mt-1">
+              <p className="text-2xl font-bold mt-1 bg-gray-100 p-2 rounded">
                 {summary.avgWeightLoss.toFixed(1)} <span className="text-base">กก./คน</span>
               </p>
             </div>
@@ -284,9 +284,9 @@ export default function Dashboard() {
               <div className="p-1 rounded-full bg-blue-100 text-blue-600 text-xl mr-2">
                 <FiCheckCircle size={18} />
               </div>
-              <p className="text-gray-500 text-base font-medium">จำนวนผู้ป่วยที่รับยาเท่าเดิม</p>
+              <p className="text-gray-500 text-lg font-bold">จำนวนผู้ป่วยที่รับยาเท่าเดิม</p>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
               {Math.floor(summary.sickCount * 0.6).toLocaleString()} <span className="text-lg">คน</span>
             </p>
           </div>
@@ -311,9 +311,9 @@ export default function Dashboard() {
               <div className="p-1 rounded-full bg-orange-100 text-orange-600 text-xl mr-2">
                 <FiPlus size={18} />
               </div>
-              <p className="text-gray-500 text-base font-medium">จำนวนผู้ป่วยที่ต้องเพิ่มยา</p>
+              <p className="text-gray-500 text-lg font-bold">จำนวนผู้ป่วยที่ต้องเพิ่มยา</p>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
               {Math.floor(summary.sickCount * 0.4).toLocaleString()} <span className="text-lg">คน</span>
             </p>
           </div>
@@ -336,11 +336,11 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center">
               <div className="p-1 rounded-full bg-red-100 text-red-600 text-xl mr-2">
-                <FiX size={18} />
+                <Image src="/icon/drug-abuse.png" alt="Drug Abuse" width={24} height={24} />
               </div>
-              <p className="text-gray-500 text-base font-medium">หยุดยา</p>
+              <p className="text-gray-500 text-lg font-bold">หยุดยา</p>
             </div>
-            <p className="text-2xl font-bold">
+            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
               {summary.stoppedMedication.toLocaleString()} <span className="text-lg">คน</span>
             </p>
           </div>

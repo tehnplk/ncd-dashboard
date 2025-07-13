@@ -488,7 +488,7 @@ export default function RemissionHosPage() {
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Remission by Hospital</h1>
+          <h1 className="text-2xl font-bold">Remission Clinic (รายหน่วยบริการ)</h1>
           {lastUpdated && (
             <p className="text-sm text-gray-500">อัปเดตล่าสุด: {lastUpdated}</p>
           )}

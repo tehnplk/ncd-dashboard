@@ -124,7 +124,7 @@ export default function CarbPage() {
     <div className="container-fluid w-full mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Carb Data by District</h1>
+          <h1 className="text-2xl font-bold">ความก้าวหน้าการนับคาร์บ</h1>
           {lastUpdated && (
             <p className="text-sm text-gray-500">อัปเดตล่าสุด: {lastUpdated}</p>
           )}

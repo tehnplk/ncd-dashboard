@@ -107,7 +107,7 @@ export default function AmpRemissionPage() {
       <ToastContainer position="top-right" autoClose={5000} />
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Remission by Amphur</h1>
+          <h1 className="text-2xl font-bold">Remission Clinic (รายอำเภอ)</h1>
           {lastUpdated && (
             <p className="text-sm text-gray-500">อัปเดตล่าสุด: {lastUpdated}</p>
           )}

@@ -14,19 +14,19 @@ const Navbar = () => {
             href="/carb" 
             className="text-white hover:bg-blue-700 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center"
           >
-            <span className="mr-1.5">📊</span> Carb
+            <img src="/icon/carb.png" alt="Carb Icon" className="h-4 w-4 mr-1.5 object-contain" /> Carb
           </Link>
           <Link 
             href="/prevention" 
             className="text-white hover:bg-blue-700 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center"
           >
-            <span className="mr-1.5">🛡️</span> Prevention
+            <img src="/icon/prevention.png" alt="Prevention Icon" className="h-4 w-4 mr-1.5 object-contain" /> Prevention
           </Link>
           <Link 
             href="/remission" 
             className="text-white hover:bg-blue-700 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-200 flex items-center"
           >
-            <span className="mr-1.5">📉</span> Remission
+            <img src="/icon/remission.png" alt="Remission Icon" className="h-4 w-4 mr-1.5 object-contain" /> Remission
           </Link>
         </div>
       </div>

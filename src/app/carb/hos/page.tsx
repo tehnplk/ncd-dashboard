@@ -537,7 +537,7 @@ export default function CarbPage() {
       )}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">ผลการนับคาร์บ</h1>
+          <h1 className="text-2xl font-bold text-gray-900">ความก้าวหน้าการนับคาร์บ</h1>
           {lastUpdated && (
             <p className="text-sm text-gray-500">อัปเดตล่าสุด: {lastUpdated}</p>
           )}
