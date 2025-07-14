@@ -510,7 +510,7 @@ export default function PreventionPage() {
             {loading ? 'กำลังโหลด...' : 'รีเฟรช'}
           </button>
           <Link 
-            href="/prevention/amp"
+            href="/prevention"
             className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded flex items-center transition-colors focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
           >
             <DocumentTextIcon className="h-5 w-5 mr-2" />
@@ -560,148 +560,68 @@ export default function PreventionPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('hoscode')}
-                  style={headerStyle}
-                  rowSpan={2}
-                >
-                  <div className="flex items-center">
-                    รหัสหน่วยงาน
-                    {getSortIndicator('hoscode')}
-                  </div>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('hoscode')} rowSpan={2}>
+                  รหัสหน่วยงาน {getSortIndicator('hoscode')}
                 </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('hosname')}
-                  style={headerStyle}
-                  rowSpan={2}
-                >
-                  <div className="flex items-center">
-                    ชื่อหน่วยงาน
-                    {getSortIndicator('hosname')}
-                  </div>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('hosname')} rowSpan={2}>
+                  ชื่อหน่วยงาน {getSortIndicator('hosname')}
                 </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                onClick={() => handleSort('amp_name')}
-                style={headerStyle}
-                rowSpan={2}
-              >
-                อำเภอ {getSortIndicator('amp_name')}
-              </th>
-              <th 
-                className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-                style={headerStyle}
-                colSpan={2}
-              >
-                Provider ID
-              </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                style={headerStyle}
-                rowSpan={2}
-              >
-                คัดกรอง35ปี+
-              </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                style={headerStyle}
-                rowSpan={2}
-              >
-                ผู้เข้ารับบริการ NCD Prevention
-              </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                style={headerStyle}
-                colSpan={3}
-              >
-                ผลการคัดกรอง
-              </th>
-              <th 
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                style={headerStyle}
-                rowSpan={2}
-              >
-                อัปเดตล่าสุด
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" style={headerStyle}
-                rowSpan={2}
-              >
-                การจัดการ
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" style={headerStyle}
-                rowSpan={2}
-              >
-                Stat
-              </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
-                  onClick={() => handleSort('amp_name')}
-                  style={headerStyle}
-                  rowSpan={2}
-                >
-                  <div className="flex items-center">
-                    อำเภอ
-                    {getSortIndicator('amp_name')}
-                  </div>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('amp_name')} rowSpan={2}>
+                  อำเภอ {getSortIndicator('amp_name')}
                 </th>
-                <th 
-                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  style={headerStyle}
-                  colSpan={2}
-                >
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('total_officer')} rowSpan={2}>
+                  จนท {getSortIndicator('total_officer')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('total_pop')} rowSpan={2}>
+                  ปชก {getSortIndicator('total_pop')}
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" colSpan={2}>
                   Provider ID
                 </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  style={headerStyle}
-                  rowSpan={2}
-                >
-                  คัดกรอง35ปี+
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('target_pop')} rowSpan={2}>
+                  คัดกรอง35ปี+ {getSortIndicator('target_pop')}
                 </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  style={headerStyle}
-                  rowSpan={2}
-                >
-                  ผู้เข้ารับบริการ NCD Prevention
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('prevention_visit')} rowSpan={2}>
+                  ผู้เข้ารับบริการ NCD Prevention {getSortIndicator('prevention_visit')}
                 </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  style={headerStyle}
-                  colSpan={3}
-                >
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" colSpan={3}>
                   ผลการคัดกรอง
                 </th>
-                <th 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  style={headerStyle}
-                  rowSpan={2}
-                >
-                  อัปเดตล่าสุด
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('trained')} rowSpan={2}>
+                  กลุ่มเสี่ยงเข้าอบรมปรับเปลี่ยน {getSortIndicator('trained')}
                 </th>
-                <th 
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" 
-                  style={headerStyle}
-                  rowSpan={2}
-                >
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('risk_to_normal')} rowSpan={2}>
+                  กลุ่มเสี่ยงกลับเป็นปกติ {getSortIndicator('risk_to_normal')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('weight_reduce')} rowSpan={2}>
+                  น้ำหนักลดรวม {getSortIndicator('weight_reduce')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('weight_reduce_avg')} rowSpan={2}>
+                  น้ำหนักลดเฉลี่ยต่อคน {getSortIndicator('weight_reduce_avg')}
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('updated_at')} rowSpan={2}>
+                  อัปเดตล่าสุด {getSortIndicator('updated_at')}
+                </th>
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" rowSpan={2}>
                   การจัดการ
-                </th>
-                <th 
-                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider" 
-                  style={headerStyle}
-                  rowSpan={2}
-                >
-                  Stat
                 </th>
               </tr>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={headerStyle}>อสม</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={headerStyle}>จนท</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={headerStyle}>ปกติ</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={headerStyle}>เสี่ยง</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" style={headerStyle}>ป่วย</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('osm_provider')}>
+                  อสม {getSortIndicator('osm_provider')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('officer_provider')}>
+                  จนท {getSortIndicator('officer_provider')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('normal_pop')}>
+                  ปกติ {getSortIndicator('normal_pop')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('risk_pop')}>
+                  เสี่ยง {getSortIndicator('risk_pop')}
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('sick_pop')}>
+                  ป่วย {getSortIndicator('sick_pop')}
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -729,6 +649,12 @@ export default function PreventionPage() {
                       {Math.round(prevention.total_pop).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {Math.round(prevention.osm_provider).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {Math.round(prevention.officer_provider).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {Math.round(prevention.target_pop).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -743,23 +669,33 @@ export default function PreventionPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {Math.round(prevention.sick_pop).toLocaleString()}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {Math.round(prevention.trained).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {Math.round(prevention.risk_to_normal).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {prevention.weight_reduce.toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {prevention.weight_reduce_avg.toLocaleString()}
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(prevention.updated_at)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       {isRowEditing(prevention.id) ? (
-                        <div className="flex space-x-2 justify-end">
+                        <div className="flex space-x-2">
                           <button
                             onClick={() => handleSave(prevention.id)}
-                            className="text-teal-600 hover:text-teal-800 font-medium px-3 py-1 bg-teal-50 hover:bg-teal-100 rounded-md transition-colors"
-                            title="Save changes"
+                            className="text-green-600 hover:text-green-900"
                           >
                             บันทึก
                           </button>
                           <button
                             onClick={handleCancel}
-                            className="text-gray-600 hover:text-gray-800 font-medium px-3 py-1 bg-gray-50 hover:bg-gray-100 rounded-md transition-colors"
-                            title="Cancel"
+                            className="text-red-600 hover:text-red-900"
                           >
                             ยกเลิก
                           </button>
@@ -767,23 +703,17 @@ export default function PreventionPage() {
                       ) : (
                         <button
                           onClick={() => handleEdit(prevention)}
-                          className="text-teal-600 hover:text-teal-800 font-medium px-2 py-1 bg-teal-50 hover:bg-teal-100 rounded-md transition-colors"
-                          title="Edit"
+                          className="text-indigo-600 hover:text-indigo-900"
                         >
-                          <PencilIcon className="h-5 w-5" />
+                          แก้ไข
                         </button>
                       )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                      <Link href={`/prevention/hos/stat?hoscode=${prevention.hoscode}`}>
-                        <DocumentTextIcon className="h-5 w-5 text-teal-600 hover:text-teal-700 mx-auto transition-colors" />
-                      </Link>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={12} className="px-6 py-4 text-center text-sm text-gray-500">
+                  <td colSpan={16} className="px-6 py-4 text-center text-sm text-gray-500">
                     ไม่พบข้อมูล
                   </td>
                 </tr>
