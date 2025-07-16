@@ -261,7 +261,7 @@ export default function PreventionAmpPage() {
               <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_2_3')}>ลด 2-3 kg {getSortIcon('weight_reduced_2_3')}</th>
               <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_3_4')}>ลด 3-4 kg {getSortIcon('weight_reduced_3_4')}</th>
               <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_4_5')}>ลด 4-5 kg {getSortIcon('weight_reduced_4_5')}</th>
-              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('weight_reduced_over_5')}>ลด >5 kg {getSortIcon('weight_reduced_over_5')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('weight_reduced_over_5')}>ลด {'>'}5 kg {getSortIcon('weight_reduced_over_5')}</th>
             </tr>
             <tr>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('normal_population')}>กลุ่มปกติ {getSortIcon('normal_population')}</th>
