@@ -93,8 +93,8 @@ export default function PreventionAmpPage() {
 
   const handleCellClick = (item: PreventionAmp, field: keyof PreventionAmp) => {
     if (!isLoggedIn) return // Prevent editing if not logged in
-    // Only allow editing of numeric fields (exclude id, amp_code, amp_name, updated_at)
-    const editableFields = ['total_volunteers', 'volunteers_registered', 'volunteers_percentage', 'total_personnel', 'personnel_registered', 'personnel_percentage', 'service_recipients', 'normal_population', 'risk_population', 'sick_population', 'risk_trained', 'risk_to_normal', 'weight_reduced_0_1', 'weight_reduced_1_2', 'weight_reduced_2_3', 'weight_reduced_3_4', 'weight_reduced_4_5', 'weight_reduced_over_5']
+    // Only allow editing of numeric fields (exclude id, amp_code, amp_name, updated_at, and percentage fields which are auto-calculated)
+    const editableFields = ['total_volunteers', 'volunteers_registered', 'total_personnel', 'personnel_registered', 'service_recipients', 'normal_population', 'risk_population', 'sick_population', 'risk_trained', 'risk_to_normal', 'weight_reduced_0_1', 'weight_reduced_1_2', 'weight_reduced_2_3', 'weight_reduced_3_4', 'weight_reduced_4_5', 'weight_reduced_over_5']
     if (editableFields.includes(field as string)) {
       setEditingCell({ id: item.amp_code, field })
     }
@@ -195,7 +195,7 @@ export default function PreventionAmpPage() {
   }
 
   const renderEditableCell = (item: PreventionAmp, field: keyof PreventionAmp, value: number, isFloat = false) => {
-    const editableFields = ['total_volunteers', 'volunteers_registered', 'volunteers_percentage', 'total_personnel', 'personnel_registered', 'personnel_percentage', 'service_recipients', 'normal_population', 'risk_population', 'sick_population', 'risk_trained', 'risk_to_normal', 'weight_reduced_0_1', 'weight_reduced_1_2', 'weight_reduced_2_3', 'weight_reduced_3_4', 'weight_reduced_4_5', 'weight_reduced_over_5']
+    const editableFields = ['total_volunteers', 'volunteers_registered', 'total_personnel', 'personnel_registered', 'service_recipients', 'normal_population', 'risk_population', 'sick_population', 'risk_trained', 'risk_to_normal', 'weight_reduced_0_1', 'weight_reduced_1_2', 'weight_reduced_2_3', 'weight_reduced_3_4', 'weight_reduced_4_5', 'weight_reduced_over_5']
     
     if (editingCell?.id === item.amp_code && editingCell?.field === field) {
       return (
