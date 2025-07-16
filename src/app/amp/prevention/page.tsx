@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { PencilIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '../../../contexts/AuthContext'
 
 interface PreventionAmp {
   id: number
@@ -27,6 +28,7 @@ type SortField = keyof PreventionAmp
 type SortDirection = 'asc' | 'desc'
 
 export default function PreventionAmpPage() {
+  const { isLoggedIn } = useAuth()
   const [data, setData] = useState<PreventionAmp[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -84,6 +86,7 @@ export default function PreventionAmpPage() {
   }
 
   const handleCellClick = (item: PreventionAmp, field: keyof PreventionAmp) => {
+    if (!isLoggedIn) return // Prevent editing if not logged in
     // Only allow editing of numeric fields (exclude id, amp_code, amp_name, updated_at)
     const editableFields = ['total_officer', 'total_pop', 'osm_provider', 'officer_provider', 'target_pop', 'prevention_visit', 'normal_pop', 'risk_pop', 'sick_pop', 'trained', 'risk_to_normal', 'weight_reduce', 'weight_reduce_avg']
     if (editableFields.includes(field as string)) {
@@ -181,7 +184,7 @@ export default function PreventionAmpPage() {
       return (
         <span
           onClick={() => handleCellClick(item, field)}
-          className="cursor-pointer hover:bg-blue-50 px-2 py-1 rounded"
+          className={isLoggedIn ? "cursor-pointer hover:bg-blue-50 px-2 py-1 rounded" : "px-2 py-1 text-gray-500"}
         >
           {isFloat ? value.toFixed(2) : value.toLocaleString()}
         </span>

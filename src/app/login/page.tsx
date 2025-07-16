@@ -92,11 +92,7 @@ export default function LoginPage() {
             </button>
           </div>
 
-          <div className="text-center text-sm text-gray-600">
-            <p>ข้อมูลสำหรับทดสอบ:</p>
-            <p>ชื่อผู้ใช้: admin</p>
-            <p>รหัสผ่าน: 112233</p>
-          </div>
+
         </form>
       </div>
     </div>

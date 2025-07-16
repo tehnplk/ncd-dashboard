@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { PencilIcon } from '@heroicons/react/24/outline'
+import { useAuth } from '../../../contexts/AuthContext'
 
 interface CarbAmp {
   id: number
@@ -18,6 +19,7 @@ type SortField = 'amp_code' | 'amp_name' | 'person_target' | 'person_carb' | 'pe
 type SortDirection = 'asc' | 'desc'
 
 export default function CarbAmpPage() {
+  const { isLoggedIn } = useAuth()
   const [data, setData] = useState<CarbAmp[]>([])
   const [loading, setLoading] = useState(true)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -94,6 +96,7 @@ export default function CarbAmpPage() {
   }
 
   const handleCellClick = (item: CarbAmp, field: 'person_target' | 'person_carb') => {
+    if (!isLoggedIn) return // Prevent editing if not logged in
     setEditingCell({ id: item.amp_code, field })
   }
 
@@ -246,7 +249,7 @@ export default function CarbAmpPage() {
                   ) : (
                     <span
                       onClick={() => handleCellClick(item, 'person_target')}
-                      className="cursor-pointer hover:bg-blue-50 px-2 py-1 rounded"
+                      className={isLoggedIn ? "cursor-pointer hover:bg-blue-50 px-2 py-1 rounded" : "px-2 py-1 text-gray-500"}
                     >
                       {item.person_target.toLocaleString()}
                     </span>
@@ -272,7 +275,7 @@ export default function CarbAmpPage() {
                   ) : (
                     <span
                       onClick={() => handleCellClick(item, 'person_carb')}
-                      className="cursor-pointer hover:bg-blue-50 px-2 py-1 rounded"
+                      className={isLoggedIn ? "cursor-pointer hover:bg-blue-50 px-2 py-1 rounded" : "px-2 py-1 text-gray-500"}
                     >
                       {item.person_carb.toLocaleString()}
                     </span>
