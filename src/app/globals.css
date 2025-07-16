@@ -24,3 +24,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* Dashed border table styles */
+.dashed-table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.dashed-table th,
+.dashed-table td {
+  border: 1.5px dashed #94a3b8;
+  padding: 0.75rem;
+  position: relative;
+}
+
+.dashed-table thead th {
+  border-top: 2px dashed #64748b;
+  border-bottom: 2px dashed #64748b;
+  background-color: #f8fafc;
+  font-weight: 600;
+}
+
+.dashed-table tbody tr:last-child td {
+  border-bottom: 2px dashed #64748b;
+}
+
+.dashed-table th:first-child,
+.dashed-table td:first-child {
+  border-left: 2px dashed #64748b;
+}
+
+.dashed-table th:last-child,
+.dashed-table td:last-child {
+  border-right: 2px dashed #64748b;
+}
+
+/* Special styling for the medication reduction section */
+.dashed-table .bg-blue-50 {
+  background-color: #eff6ff;
+  border: 1.5px dashed #93c5fd;
+}
+
+/* Ensure the dashed borders don't interfere with hover effects */
+.dashed-table tbody tr:hover td {
+  background-color: rgba(59, 130, 246, 0.05);
+  border-top: 1.5px dashed #60a5fa;
+  border-bottom: 1.5px dashed #60a5fa;
+}

@@ -8,19 +8,24 @@ interface PreventionAmp {
   id: number
   amp_code: string
   amp_name: string
-  total_officer: number
-  total_pop: number
-  osm_provider: number
-  officer_provider: number
-  target_pop: number
-  prevention_visit: number
-  normal_pop: number
-  risk_pop: number
-  sick_pop: number
-  trained: number
+  total_volunteers: number
+  volunteers_registered: number
+  volunteers_percentage: number
+  total_personnel: number
+  personnel_registered: number
+  personnel_percentage: number
+  service_recipients: number
+  normal_population: number
+  risk_population: number
+  sick_population: number
+  risk_trained: number
   risk_to_normal: number
-  weight_reduce: number
-  weight_reduce_avg: number
+  weight_reduced_0_1: number
+  weight_reduced_1_2: number
+  weight_reduced_2_3: number
+  weight_reduced_3_4: number
+  weight_reduced_4_5: number
+  weight_reduced_over_5: number
   updated_at: string
 }
 
@@ -36,6 +41,7 @@ export default function PreventionAmpPage() {
   const [sortField, setSortField] = useState<SortField>('amp_code')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [editingCell, setEditingCell] = useState<{id: string, field: keyof PreventionAmp} | null>(null)
+
 
   useEffect(() => {
     fetchData()
@@ -88,7 +94,7 @@ export default function PreventionAmpPage() {
   const handleCellClick = (item: PreventionAmp, field: keyof PreventionAmp) => {
     if (!isLoggedIn) return // Prevent editing if not logged in
     // Only allow editing of numeric fields (exclude id, amp_code, amp_name, updated_at)
-    const editableFields = ['total_officer', 'total_pop', 'osm_provider', 'officer_provider', 'target_pop', 'prevention_visit', 'normal_pop', 'risk_pop', 'sick_pop', 'trained', 'risk_to_normal', 'weight_reduce', 'weight_reduce_avg']
+    const editableFields = ['total_volunteers', 'volunteers_registered', 'volunteers_percentage', 'total_personnel', 'personnel_registered', 'personnel_percentage', 'service_recipients', 'normal_population', 'risk_population', 'sick_population', 'risk_trained', 'risk_to_normal', 'weight_reduced_0_1', 'weight_reduced_1_2', 'weight_reduced_2_3', 'weight_reduced_3_4', 'weight_reduced_4_5', 'weight_reduced_over_5']
     if (editableFields.includes(field as string)) {
       setEditingCell({ id: item.amp_code, field })
     }
@@ -96,15 +102,46 @@ export default function PreventionAmpPage() {
 
   const handleCellSave = async (item: PreventionAmp, field: keyof PreventionAmp, value: number) => {
     try {
+      // Create updated item with the new value
+      const updatedItem = { ...item, [field]: value }
+      
+      // Auto-calculate percentages when related fields are updated
+      if (field === 'total_volunteers' || field === 'volunteers_registered') {
+        if (field === 'total_volunteers' && updatedItem.total_volunteers > 0) {
+          updatedItem.volunteers_percentage = (updatedItem.volunteers_registered / updatedItem.total_volunteers) * 100
+        } else if (field === 'volunteers_registered' && updatedItem.total_volunteers > 0) {
+          updatedItem.volunteers_percentage = (updatedItem.volunteers_registered / updatedItem.total_volunteers) * 100
+        }
+      }
+      
+      if (field === 'total_personnel' || field === 'personnel_registered') {
+        if (field === 'total_personnel' && updatedItem.total_personnel > 0) {
+          updatedItem.personnel_percentage = (updatedItem.personnel_registered / updatedItem.total_personnel) * 100
+        } else if (field === 'personnel_registered' && updatedItem.total_personnel > 0) {
+          updatedItem.personnel_percentage = (updatedItem.personnel_registered / updatedItem.total_personnel) * 100
+        }
+      }
+      
+      if (field === 'risk_trained' || field === 'risk_to_normal') {
+        if (field === 'risk_trained' && updatedItem.risk_trained > 0) {
+          // Don't let risk_to_normal exceed risk_trained
+          if (updatedItem.risk_to_normal > updatedItem.risk_trained) {
+            updatedItem.risk_to_normal = updatedItem.risk_trained
+          }
+        } else if (field === 'risk_to_normal' && updatedItem.risk_trained > 0) {
+          // Don't let risk_to_normal exceed risk_trained
+          if (updatedItem.risk_to_normal > updatedItem.risk_trained) {
+            updatedItem.risk_to_normal = updatedItem.risk_trained
+          }
+        }
+      }
+
       const response = await fetch(`/api/amp/prevention/${item.amp_code}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          ...item,
-          [field]: value
-        }),
+        body: JSON.stringify(updatedItem),
       })
 
       if (response.ok) {
@@ -135,6 +172,7 @@ export default function PreventionAmpPage() {
     }
   }
 
+  // Sort the data
   const sortedData = [...data].sort((a, b) => {
     let aValue = a[sortField]
     let bValue = b[sortField]
@@ -157,7 +195,7 @@ export default function PreventionAmpPage() {
   }
 
   const renderEditableCell = (item: PreventionAmp, field: keyof PreventionAmp, value: number, isFloat = false) => {
-    const editableFields = ['total_officer', 'total_pop', 'osm_provider', 'officer_provider', 'target_pop', 'prevention_visit', 'normal_pop', 'risk_pop', 'sick_pop', 'trained', 'risk_to_normal', 'weight_reduce', 'weight_reduce_avg']
+    const editableFields = ['total_volunteers', 'volunteers_registered', 'volunteers_percentage', 'total_personnel', 'personnel_registered', 'personnel_percentage', 'service_recipients', 'normal_population', 'risk_population', 'sick_population', 'risk_trained', 'risk_to_normal', 'weight_reduced_0_1', 'weight_reduced_1_2', 'weight_reduced_2_3', 'weight_reduced_3_4', 'weight_reduced_4_5', 'weight_reduced_over_5']
     
     if (editingCell?.id === item.amp_code && editingCell?.field === field) {
       return (
@@ -203,70 +241,92 @@ export default function PreventionAmpPage() {
       <h1 className="text-2xl font-bold mb-6">ผลการดำเนินงาน NCD Prevention</h1>
       
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
+        <table className="min-w-full bg-white border border-dashed border-gray-400">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('amp_code')}>รหัส {getSortIcon('amp_code')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('amp_name')}>อำเภอ {getSortIcon('amp_name')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('total_officer')}>Total Officer {getSortIcon('total_officer')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('total_pop')}>Total Pop {getSortIcon('total_pop')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('osm_provider')}>OSM Provider {getSortIcon('osm_provider')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('officer_provider')}>Officer Provider {getSortIcon('officer_provider')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('target_pop')}>Target Pop {getSortIcon('target_pop')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('prevention_visit')}>Prevention Visit {getSortIcon('prevention_visit')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('normal_pop')}>Normal Pop {getSortIcon('normal_pop')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('risk_pop')}>Risk Pop {getSortIcon('risk_pop')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('sick_pop')}>Sick Pop {getSortIcon('sick_pop')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('trained')}>Trained {getSortIcon('trained')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('risk_to_normal')}>Risk to Normal {getSortIcon('risk_to_normal')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('weight_reduce')}>Weight Reduce {getSortIcon('weight_reduce')}</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('weight_reduce_avg')}>Weight Reduce Avg {getSortIcon('weight_reduce_avg')}</th>
-
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('amp_code')}>รหัส {getSortIcon('amp_code')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('amp_name')}>อำเภอ {getSortIcon('amp_name')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('total_volunteers')}>จำนวนอสม. {getSortIcon('total_volunteers')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('volunteers_registered')}>อสม.สมัคร Provider {getSortIcon('volunteers_registered')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('volunteers_percentage')}>ร้อยละ อสม. {getSortIcon('volunteers_percentage')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('total_personnel')}>จำนวนบุคลากร {getSortIcon('total_personnel')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('personnel_registered')}>บุคลากรสมัคร Provider {getSortIcon('personnel_registered')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('personnel_percentage')}>ร้อยละ บุคลากร {getSortIcon('personnel_percentage')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('service_recipients')}>ผู้เข้ารับบริการ {getSortIcon('service_recipients')}</th>
+              <th colSpan={3} className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase border-r border-gray-300 bg-blue-50">จำนวนปชก.ที่ได้รับการคัดกรองแยกหรือประเมิน</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('risk_trained')}>กลุ่มเสี่ยงอบรม {getSortIcon('risk_trained')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('risk_to_normal')}>เสี่ยง→ปกติ {getSortIcon('risk_to_normal')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_0_1')}>ลด 0-1 kg {getSortIcon('weight_reduced_0_1')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_1_2')}>ลด 1-2 kg {getSortIcon('weight_reduced_1_2')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_2_3')}>ลด 2-3 kg {getSortIcon('weight_reduced_2_3')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_3_4')}>ลด 3-4 kg {getSortIcon('weight_reduced_3_4')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 border-r border-gray-300" onClick={() => handleSort('weight_reduced_4_5')}>ลด 4-5 kg {getSortIcon('weight_reduced_4_5')}</th>
+              <th rowSpan={2} className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('weight_reduced_over_5')}>ลด >5 kg {getSortIcon('weight_reduced_over_5')}</th>
+            </tr>
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('normal_population')}>กลุ่มปกติ {getSortIcon('normal_population')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('risk_population')}>กลุ่มเสี่ยง {getSortIcon('risk_population')}</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50 border-r border-gray-300" onClick={() => handleSort('sick_population')}>กลุ่มป่วย {getSortIcon('sick_population')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedData.map((item, index) => (
               <tr key={item.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors duration-150`}>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{item.amp_code}</td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{item.amp_name}</td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'total_officer', item.total_officer)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">{item.amp_code}</td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">{item.amp_name}</td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'total_volunteers', item.total_volunteers)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'total_pop', item.total_pop)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'volunteers_registered', item.volunteers_registered)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'osm_provider', item.osm_provider)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'volunteers_percentage', item.volunteers_percentage, true)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'officer_provider', item.officer_provider)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'total_personnel', item.total_personnel)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'target_pop', item.target_pop)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'personnel_registered', item.personnel_registered)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'prevention_visit', item.prevention_visit)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'personnel_percentage', item.personnel_percentage, true)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'normal_pop', item.normal_pop)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'service_recipients', item.service_recipients)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'risk_pop', item.risk_pop)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'normal_population', item.normal_population)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'sick_pop', item.sick_pop)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'risk_population', item.risk_population)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'trained', item.trained)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'sick_population', item.sick_population)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'risk_trained', item.risk_trained)}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
                   {renderEditableCell(item, 'risk_to_normal', item.risk_to_normal)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'weight_reduce', item.weight_reduce, true)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'weight_reduced_0_1', item.weight_reduced_0_1)}
                 </td>
-                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {renderEditableCell(item, 'weight_reduce_avg', item.weight_reduce_avg, true)}
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'weight_reduced_1_2', item.weight_reduced_1_2)}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'weight_reduced_2_3', item.weight_reduced_2_3)}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'weight_reduced_3_4', item.weight_reduced_3_4)}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'weight_reduced_4_5', item.weight_reduced_4_5)}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900 border border-dashed border-gray-300">
+                  {renderEditableCell(item, 'weight_reduced_over_5', item.weight_reduced_over_5)}
                 </td>
               </tr>
             ))}

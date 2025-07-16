@@ -205,83 +205,83 @@ export default function RemissionAmpPage() {
       <h1 className="text-2xl font-bold mb-6">ผลการดำเนินงานคลินิก NCDs รักษาหาย</h1>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200 text-sm">
+        <table className="min-w-full bg-white text-sm border-separate border-spacing-0 dashed-table">
           <thead className="bg-gray-50">
             <tr>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('amp_code')}>รหัส {getSortIcon('amp_code')}</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('amp_name')}>อำเภอ {getSortIcon('amp_name')}</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('trained')}>จำนวนผู้ป่วยเข้ารับการอบรมปรับเปลี่ยนพฤติกรรม {getSortIcon('trained')}</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('ncds_remission')}>จำนวนผู้ป่วยเข้าเกณฑ์ NCDs Remission {getSortIcon('ncds_remission')}</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('stopped_medication')}>จำนวนผู้ป่วยที่หยุดยาได้ {getSortIcon('stopped_medication')}</th>
-              <th colSpan={9} className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase bg-blue-50">จำนวนผู้ป่วยที่ลดยาลง</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('same_medication')}>จำนวนผู้ป่วยที่รับยาเท่าเดิม {getSortIcon('same_medication')}</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('increased_medication')}>จำนวนผู้ป่วยเพิ่มยา {getSortIcon('increased_medication')}</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('pending_evaluation')}>จำนวนผู้ป่วยอยู่ระหว่างการประเมิน {getSortIcon('pending_evaluation')}</th>
-              <th rowSpan={2} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('lost_followup')}>จำนวนผู้ป่วยขาดนัด/ติดตามไม่ได้ {getSortIcon('lost_followup')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('amp_code')}>รหัส {getSortIcon('amp_code')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('amp_name')}>อำเภอ {getSortIcon('amp_name')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('trained')}>จำนวนผู้ป่วยเข้ารับการอบรมปรับเปลี่ยนพฤติกรรม {getSortIcon('trained')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('ncds_remission')}>จำนวนผู้ป่วยเข้าเกณฑ์ NCDs Remission {getSortIcon('ncds_remission')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('stopped_medication')}>จำนวนผู้ป่วยที่หยุดยาได้ {getSortIcon('stopped_medication')}</th>
+              <th colSpan={9} className="text-center text-xs font-medium text-gray-500 uppercase bg-blue-50">จำนวนผู้ป่วยที่ลดยาลง</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('same_medication')}>จำนวนผู้ป่วยที่รับยาเท่าเดิม {getSortIcon('same_medication')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('increased_medication')}>จำนวนผู้ป่วยเพิ่มยา {getSortIcon('increased_medication')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('pending_evaluation')}>จำนวนผู้ป่วยอยู่ระหว่างการประเมิน {getSortIcon('pending_evaluation')}</th>
+              <th rowSpan={2} className="text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100" onClick={() => handleSort('lost_followup')}>จำนวนผู้ป่วยขาดนัด/ติดตามไม่ได้ {getSortIcon('lost_followup')}</th>
             </tr>
             <tr>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_1')}>1 ตัว {getSortIcon('reduced_1')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_2')}>2 ตัว {getSortIcon('reduced_2')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_3')}>3 ตัว {getSortIcon('reduced_3')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_4')}>4 ตัว {getSortIcon('reduced_4')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_5')}>5 ตัว {getSortIcon('reduced_5')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_6')}>6 ตัว {getSortIcon('reduced_6')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_7')}>7 ตัว {getSortIcon('reduced_7')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_8')}>8 ตัว {getSortIcon('reduced_8')}</th>
-              <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_n')}>&gt;8 ตัว {getSortIcon('reduced_n')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_1')}>1 ตัว {getSortIcon('reduced_1')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_2')}>2 ตัว {getSortIcon('reduced_2')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_3')}>3 ตัว {getSortIcon('reduced_3')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_4')}>4 ตัว {getSortIcon('reduced_4')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_5')}>5 ตัว {getSortIcon('reduced_5')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_6')}>6 ตัว {getSortIcon('reduced_6')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_7')}>7 ตัว {getSortIcon('reduced_7')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_8')}>8 ตัว {getSortIcon('reduced_8')}</th>
+              <th className="text-center text-xs font-medium text-gray-500 uppercase cursor-pointer hover:bg-gray-100 bg-blue-50" onClick={() => handleSort('reduced_n')}>&gt;8 ตัว {getSortIcon('reduced_n')}</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {sortedData.map((item, index) => (
               <tr key={item.id} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-blue-50 transition-colors duration-150`}>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{item.amp_code}</td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">{item.amp_name}</td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900">{item.amp_code}</td>
+                <td className="whitespace-nowrap text-sm text-gray-900">{item.amp_name}</td>
+                <td className="whitespace-nowrap text-sm text-gray-900">
                   {renderEditableCell(item, 'trained', item.trained)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900">
                   {renderEditableCell(item, 'ncds_remission', item.ncds_remission)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900">
                   {renderEditableCell(item, 'stopped_medication', item.stopped_medication)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_1', item.reduced_1)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_2', item.reduced_2)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_3', item.reduced_3)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_4', item.reduced_4)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_5', item.reduced_5)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_6', item.reduced_6)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_7', item.reduced_7)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_8', item.reduced_8)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900 text-center">
                   {renderEditableCell(item, 'reduced_n', item.reduced_n)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900">
                   {renderEditableCell(item, 'same_medication', item.same_medication)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900">
                   {renderEditableCell(item, 'increased_medication', item.increased_medication)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900">
                   {renderEditableCell(item, 'pending_evaluation', item.pending_evaluation)}
                 </td>
-                <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="whitespace-nowrap text-sm text-gray-900">
                   {renderEditableCell(item, 'lost_followup', item.lost_followup)}
                 </td>
               </tr>
