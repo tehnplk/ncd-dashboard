@@ -69,7 +69,7 @@ model Prevention {
   normal_pop        Int
   risk_pop          Int
   sick_pop          Int
-  trained Int
+  trained           Int
   risk_to_normal    Int
   weight_reduce     Float
   weight_reduce_avg Float
@@ -77,32 +77,89 @@ model Prevention {
 }
 
 model Remission {
-  id                      Int     @id @default(autoincrement())  // Primary Key
-  hoscode                 String  @unique                        // รหัสหน่วยบริการ
-  hosname                 String                                 // ชื่อหน่วยบริการ
-  hostype                 String                                 // ประเภทหน่วยบริการ
-  tmb_code                String                                 // รหัสตำบล
-  tmb_name                String                                 // ชื่อตำบล
-  amp_code                String                                 // รหัสอำเภอ
-  amp_name                String                                 // ชื่ออำเภอ
+  id       Int    @id @default(autoincrement()) // Primary Key
+  hoscode  String @unique // รหัสหน่วยบริการ
+  hosname  String // ชื่อหน่วยบริการ
+  hostype  String // ประเภทหน่วยบริการ
+  tmb_code String // รหัสตำบล
+  tmb_name String // ชื่อตำบล
+  amp_code String // รหัสอำเภอ
+  amp_name String // ชื่ออำเภอ
 
-  trained                 Int                                    // ผู้ป่วยเข้ารับการอบรม
-  ncds_remission          Int                                    // ผู้ป่วยเข้าเกณฑ์ NCDs Remission
-  stopped_medication      Int                                    // ผู้ป่วยที่หยุดยาได้
+  trained            Int // ผู้ป่วยเข้ารับการอบรม
+  ncds_remission     Int // ผู้ป่วยเข้าเกณฑ์ NCDs Remission
+  stopped_medication Int // ผู้ป่วยที่หยุดยาได้
 
-  reduced_1               Int                                    // ลดยา 1 ตัว
-  reduced_2               Int
-  reduced_3               Int
-  reduced_4               Int
-  reduced_5               Int
-  reduced_6               Int
-  reduced_7               Int
-  reduced_8               Int
-  reduced_n               Int                                    // ลดยา > 8 ตัว (เปลี่ยนจาก reduced_more_than_8)
+  reduced_1 Int // ลดยา 1 ตัว
+  reduced_2 Int
+  reduced_3 Int
+  reduced_4 Int
+  reduced_5 Int
+  reduced_6 Int
+  reduced_7 Int
+  reduced_8 Int
+  reduced_n Int // ลดยา > 8 ตัว (เปลี่ยนจาก reduced_more_than_8)
 
-  same_medication         Int                                    // รับยาเท่าเดิม
-  increased_medication    Int                                    // ต้องเพิ่มยา
-  pending_evaluation      Int                                    // อยู่ระหว่างการประเมิน
-  lost_followup           Int                                    // ขาดนัด/ติดตามไม่ได้
+  same_medication      Int // รับยาเท่าเดิม
+  increased_medication Int // ต้องเพิ่มยา
+  pending_evaluation   Int // อยู่ระหว่างการประเมิน
+  lost_followup        Int // ขาดนัด/ติดตามไม่ได้
 }
 
+model CarbAmp {
+  id            Int      @id @default(autoincrement())
+  amp_code      String   @unique
+  amp_name      String
+  person_target Int
+  person_carb   Int
+  percentage    Float
+  person_diff   Int
+  updated_at    DateTime @default(now())
+}
+
+model PreventionAmp {
+  id                Int      @id @default(autoincrement())
+  amp_code          String   @unique
+  amp_name          String
+  total_officer     Int
+  total_pop         Int
+  osm_provider      Int
+  officer_provider  Int
+  target_pop        Int
+  prevention_visit  Int
+  normal_pop        Int
+  risk_pop          Int
+  sick_pop          Int
+  trained           Int
+  risk_to_normal    Int
+  weight_reduce     Float
+  weight_reduce_avg Float
+  updated_at        DateTime @default(now())
+}
+
+model RemissionAmp {
+  id       Int    @id @default(autoincrement())
+  amp_code String @unique
+  amp_name String
+
+  trained            Int
+  ncds_remission     Int
+  stopped_medication Int
+
+  reduced_1 Int
+  reduced_2 Int
+  reduced_3 Int
+  reduced_4 Int
+  reduced_5 Int
+  reduced_6 Int
+  reduced_7 Int
+  reduced_8 Int
+  reduced_n Int
+
+  same_medication      Int
+  increased_medication Int
+  pending_evaluation   Int
+  lost_followup        Int
+
+  updated_at DateTime @default(now())
+}

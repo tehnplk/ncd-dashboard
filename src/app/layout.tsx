@@ -4,6 +4,7 @@ import "./globals.css";
 import { StagewiseToolbar } from "@stagewise/toolbar-next";
 import ReactPlugin from "@stagewise-plugins/react";
 import Navbar from "../components/Navbar";
+import { AuthProvider } from "../contexts/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,13 +31,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        {children}
-        {process.env.NODE_ENV === 'development' && (
-          <StagewiseToolbar config={{
-            plugins: [ReactPlugin],
-          }} />
-        )}
+        <AuthProvider>
+          <Navbar />
+          {children}
+          {process.env.NODE_ENV === 'development' && (
+            <StagewiseToolbar config={{
+              plugins: [ReactPlugin],
+            }} />
+          )}
+        </AuthProvider>
       </body>
     </html>
   );
