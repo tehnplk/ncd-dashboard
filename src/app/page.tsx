@@ -61,7 +61,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        
+
         // Fetch all data in parallel
         const endpoints = [
           { name: 'carb', url: '/api/sum/carb' },
@@ -70,7 +70,7 @@ export default function Dashboard() {
         ];
 
         // Define a type for the API response
-        type ApiResponse = 
+        type ApiResponse =
           | { name: string; data: any; error?: never }
           | { name: string; error: string; data?: never };
 
@@ -128,23 +128,23 @@ export default function Dashboard() {
   return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold text-center mb-8">คนไทยห่างไกล NCDs จังหวัดพิษณุโลก</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* นับคาร์บ Card */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
           <div className="flex items-center gap-2 mb-4">
             <div className="p-1.5 rounded-full bg-blue-100">
-              <Image 
-                src="/icon/rice.png" 
-                alt="Rice" 
-                width={20} 
-                height={20} 
+              <Image
+                src="/icon/rice.png"
+                alt="Rice"
+                width={20}
+                height={20}
                 className="w-5 h-5"
               />
             </div>
             <h2 className="text-xl font-bold text-gray-800">นับคาร์บ</h2>
           </div>
-          
+
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -157,23 +157,23 @@ export default function Dashboard() {
                 <span className="text-gray-600">เป้าหมาย</span>
                 <span className="font-medium">{formatNumber(carbData?.data?.total_target || 0)} คน</span>
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">นับคาร์บ</span>
                 <span className="font-medium">{formatNumber(carbData?.data?.total_carb || 0)} คน</span>
               </div>
-              
+
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">ร้อยละ</span>
                 <span className="text-2xl font-bold text-green-600">
                   {isLoading ? '...' : `${carbData?.data?.percentage?.toFixed(2) || '0.00'}%`}
                 </span>
               </div>
-              
+
               {/* Progress bar */}
               <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                <div 
-                  className="bg-blue-500 h-2.5 rounded-full" 
+                <div
+                  className="bg-blue-500 h-2.5 rounded-full"
                   style={{ width: `${carbData?.data?.percentage || 0}%` }}
                 ></div>
               </div>
@@ -186,11 +186,11 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-full bg-green-100">
-                <Image 
-                  src="/icon/medical-report.png" 
-                  alt="Medical Report" 
-                  width={20} 
-                  height={20} 
+                <Image
+                  src="/icon/medical-report.png"
+                  alt="Medical Report"
+                  width={20}
+                  height={20}
                   className="w-5 h-5"
                 />
               </div>
@@ -200,7 +200,7 @@ export default function Dashboard() {
               {isLoading ? '...' : formatNumber(preventionData?.data?.service_recipients || 0)} คน
             </span>
           </div>
-          
+
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
@@ -216,7 +216,7 @@ export default function Dashboard() {
                 </div>
                 <span className="font-medium">{formatNumber(preventionData?.data?.normal_population || 0)} คน</span>
               </div>
-              
+
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
                 <div className="flex items-center">
                   <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
@@ -224,7 +224,7 @@ export default function Dashboard() {
                 </div>
                 <span className="font-medium">{formatNumber(preventionData?.data?.risk_population || 0)} คน</span>
               </div>
-              
+
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
                 <div className="flex items-center">
                   <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
@@ -240,17 +240,17 @@ export default function Dashboard() {
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
           <div className="flex items-center gap-2 mb-4">
             <div className="p-1.5 rounded-full bg-purple-100">
-              <Image 
-                src="/icon/remission.png" 
-                alt="Remission" 
-                width={20} 
-                height={20} 
+              <Image
+                src="/icon/remission.png"
+                alt="Remission"
+                width={20}
+                height={20}
                 className="w-5 h-5"
               />
             </div>
             <h2 className="text-xl font-bold text-gray-800">คลินิก NCDs รักษาหาย</h2>
           </div>
-          
+
           {isLoading ? (
             <div className="flex justify-center items-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
@@ -266,7 +266,7 @@ export default function Dashboard() {
                 </div>
                 <span className="font-medium">{formatNumber(remissionData?.data?.total_ncds_remission || 0)} คน</span>
               </div>
-              
+
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
                 <div className="flex items-center">
                   <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
@@ -274,7 +274,7 @@ export default function Dashboard() {
                 </div>
                 <span className="font-medium">{formatNumber(remissionData?.data?.total_stopped_medication || 0)} คน</span>
               </div>
-              
+
               <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
                 <div className="flex items-center">
                   <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
