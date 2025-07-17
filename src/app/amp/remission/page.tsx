@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { PencilIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '../../../contexts/AuthContext'
+import Image from 'next/image'
 
 interface RemissionAmp {
   id: number
@@ -203,6 +204,133 @@ export default function RemissionAmpPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">ผลการดำเนินงานคลินิก NCDs รักษาหาย</h1>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        {/* Training Bar Chart Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 rounded-full bg-purple-100">
+              <Image
+                src="/icon/remission.png"
+                alt="Remission"
+                width={20}
+                height={20}
+                className="w-5 h-5"
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">ผู้ป่วยเข้ารับการอบรมปรับเปลี่ยนพฤติกรรม</h2>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+            </div>
+          ) : (
+            <div className="bg-gray-50 p-4 border border-gray-200 rounded-md w-full overflow-x-auto" style={{ minHeight: "300px" }}>
+              <div className="flex items-end min-w-max" style={{ height: 'calc(100% - 40px)' }}>
+                {[...data]
+                  .sort((a, b) => b.trained - a.trained)
+                  .slice(0, 10)
+                  .map((item, index) => {
+                    const maxValue = Math.max(...data.map(d => d.trained));
+                    const heightPercentage = maxValue > 0 ? (item.trained / maxValue) * 100 : 0;
+
+                    return (
+                      <div
+                        key={item.amp_code}
+                        className="flex flex-col items-center h-full px-1 sm:px-2"
+                        style={{ width: '10%', minWidth: '60px' }}
+                      >
+                        <div className="text-xs font-medium mb-1 text-center w-full truncate text-green-700">
+                          {item.trained.toLocaleString()}
+                        </div>
+                        <div
+                          className="bg-green-500 w-10/12 sm:w-4/5 mx-auto rounded-t-sm hover:bg-green-600 transition-colors"
+                          style={{
+                            height: `${Math.max(heightPercentage * 2, 4)}px`,
+                            maxHeight: "200px",
+                          }}
+                        ></div>
+                        <div className="mt-2 text-xs text-gray-600 truncate w-full text-center">
+                          {item.amp_name}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Cost Savings Bar Chart Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 rounded-full bg-green-100">
+              <Image
+                src="/icon/money.png"
+                alt="Money"
+                width={20}
+                height={20}
+                className="w-5 h-5"
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">ประหยัดค่าใช้จ่าย</h2>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+            </div>
+          ) : (
+            <div className="bg-gray-50 p-4 border border-gray-200 rounded-md w-full overflow-x-auto" style={{ minHeight: "300px" }}>
+              <div className="flex items-end min-w-max" style={{ height: 'calc(100% - 40px)' }}>
+                {[...data]
+                  .map(item => ({
+                    ...item,
+                    totalSavings: ((item.ncds_remission + item.stopped_medication) * 16310) +
+                      (item.reduced_1 * 1000) +
+                      (item.reduced_2 * 2000) +
+                      (item.reduced_3 * 3000)
+                  }))
+                  .sort((a, b) => b.totalSavings - a.totalSavings)
+                  .slice(0, 10)
+                  .map((item, index) => {
+                    const maxValue = Math.max(...data.map(d =>
+                      ((d.ncds_remission + d.stopped_medication) * 16310) +
+                      (d.reduced_1 * 1000) +
+                      (d.reduced_2 * 2000) +
+                      (d.reduced_3 * 3000)
+                    ));
+                    const heightPercentage = maxValue > 0 ? (item.totalSavings / maxValue) * 100 : 0;
+
+                    return (
+                      <div
+                        key={item.amp_code}
+                        className="flex flex-col items-center h-full px-1 sm:px-2"
+                        style={{ width: '10%', minWidth: '60px' }}
+                      >
+                        <div className="text-xs font-medium mb-1 text-center w-full truncate text-orange-600">
+                          {(item.totalSavings / 1000000).toFixed(1)} ลบ.
+                        </div>
+                        <div
+                          className="bg-orange-300 w-10/12 sm:w-4/5 mx-auto rounded-t-sm hover:bg-orange-400 transition-colors"
+                          style={{
+                            height: `${Math.max(heightPercentage * 2, 4)}px`,
+                            maxHeight: "200px",
+                          }}
+                        ></div>
+                        <div className="mt-2 text-xs text-gray-600 truncate w-full text-center">
+                          {item.amp_name}
+                        </div>
+                      </div>
+                    );
+                  })}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white text-sm border-separate border-spacing-0 dashed-table">

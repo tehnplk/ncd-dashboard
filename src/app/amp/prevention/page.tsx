@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { PencilIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '../../../contexts/AuthContext'
+import Image from 'next/image'
 
 interface PreventionAmp {
   id: number
@@ -40,7 +41,7 @@ export default function PreventionAmpPage() {
   const [editData, setEditData] = useState<Partial<PreventionAmp>>({})
   const [sortField, setSortField] = useState<SortField>('amp_code')
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
-  const [editingCell, setEditingCell] = useState<{id: string, field: keyof PreventionAmp} | null>(null)
+  const [editingCell, setEditingCell] = useState<{ id: string, field: keyof PreventionAmp } | null>(null)
 
 
   useEffect(() => {
@@ -104,7 +105,7 @@ export default function PreventionAmpPage() {
     try {
       // Create updated item with the new value
       const updatedItem = { ...item, [field]: value }
-      
+
       // Auto-calculate percentages when related fields are updated
       if (field === 'total_volunteers' || field === 'volunteers_registered') {
         if (updatedItem.total_volunteers > 0) {
@@ -113,7 +114,7 @@ export default function PreventionAmpPage() {
           updatedItem.volunteers_percentage = 0.00
         }
       }
-      
+
       if (field === 'total_personnel' || field === 'personnel_registered') {
         if (updatedItem.total_personnel > 0) {
           updatedItem.personnel_percentage = (updatedItem.personnel_registered / updatedItem.total_personnel) * 100
@@ -121,7 +122,7 @@ export default function PreventionAmpPage() {
           updatedItem.personnel_percentage = 0.00
         }
       }
-      
+
       if (field === 'risk_trained' || field === 'risk_to_normal') {
         if (field === 'risk_trained' && updatedItem.risk_trained > 0) {
           // Don't let risk_to_normal exceed risk_trained
@@ -176,12 +177,12 @@ export default function PreventionAmpPage() {
   const sortedData = [...data].sort((a, b) => {
     let aValue = a[sortField]
     let bValue = b[sortField]
-    
+
     if (typeof aValue === 'string') {
       aValue = aValue.toLowerCase()
       bValue = (bValue as string).toLowerCase()
     }
-    
+
     if (sortDirection === 'asc') {
       return aValue < bValue ? -1 : aValue > bValue ? 1 : 0
     } else {
@@ -196,7 +197,7 @@ export default function PreventionAmpPage() {
 
   const renderEditableCell = (item: PreventionAmp, field: keyof PreventionAmp, value: number, isFloat = false) => {
     const editableFields = ['total_volunteers', 'volunteers_registered', 'total_personnel', 'personnel_registered', 'service_recipients', 'normal_population', 'risk_population', 'sick_population', 'risk_trained', 'risk_to_normal', 'weight_reduced_0_1', 'weight_reduced_1_2', 'weight_reduced_2_3', 'weight_reduced_3_4', 'weight_reduced_4_5', 'weight_reduced_over_5']
-    
+
     if (editingCell?.id === item.amp_code && editingCell?.field === field) {
       return (
         <input
@@ -217,7 +218,7 @@ export default function PreventionAmpPage() {
         />
       )
     }
-    
+
     if (editableFields.includes(field as string)) {
       return (
         <span
@@ -228,8 +229,26 @@ export default function PreventionAmpPage() {
         </span>
       )
     }
-    
+
     return isFloat ? value.toFixed(2) : value.toLocaleString()
+  }
+
+  // Calculate totals for the summary cards
+  const totalServiceRecipients = data.reduce((sum, item) => sum + item.service_recipients, 0)
+  const totalNormalPopulation = data.reduce((sum, item) => sum + item.normal_population, 0)
+  const totalRiskPopulation = data.reduce((sum, item) => sum + item.risk_population, 0)
+  const totalSickPopulation = data.reduce((sum, item) => sum + item.sick_population, 0)
+  const totalRiskTrained = data.reduce((sum, item) => sum + item.risk_trained, 0)
+  const totalRiskToNormal = data.reduce((sum, item) => sum + item.risk_to_normal, 0)
+  const totalWeightReduced01 = data.reduce((sum, item) => sum + item.weight_reduced_0_1, 0)
+  const totalWeightReduced12 = data.reduce((sum, item) => sum + item.weight_reduced_1_2, 0)
+  const totalWeightReduced23 = data.reduce((sum, item) => sum + item.weight_reduced_2_3, 0)
+  const totalWeightReduced34 = data.reduce((sum, item) => sum + item.weight_reduced_3_4, 0)
+  const totalWeightReduced45 = data.reduce((sum, item) => sum + item.weight_reduced_4_5, 0)
+  const totalWeightReducedOver5 = data.reduce((sum, item) => sum + item.weight_reduced_over_5, 0)
+
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('th-TH').format(num)
   }
 
   if (loading) {
@@ -239,7 +258,163 @@ export default function PreventionAmpPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">ผลการดำเนินงาน NCD Prevention</h1>
-      
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+        {/* คัดกรอง NCDs Summary Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-full bg-green-100">
+                <Image
+                  src="/icon/medical-report.png"
+                  alt="Medical Report"
+                  width={20}
+                  height={20}
+                  className="w-5 h-5"
+                />
+              </div>
+              <h2 className="text-xl font-bold text-gray-800">คัดกรอง NCDs</h2>
+            </div>
+            <span className="text-2xl font-bold text-green-600">
+              {formatNumber(totalServiceRecipients)} คน
+            </span>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-emerald-500 mr-2"></div>
+                <span className="text-gray-700">ปกติ</span>
+              </div>
+              <span className="font-bold text-emerald-700">{formatNumber(totalNormalPopulation)} คน</span>
+            </div>
+
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                <span className="text-gray-700">เสี่ยง</span>
+              </div>
+              <span className="font-bold text-yellow-600">{formatNumber(totalRiskPopulation)} คน</span>
+            </div>
+
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                <span className="text-gray-700">ป่วย</span>
+              </div>
+              <span className="font-bold text-red-600">{formatNumber(totalSickPopulation)} คน</span>
+            </div>
+          </div>
+        </div>
+
+        {/* อบรมปรับเปลี่ยนพฤติกรรม Summary Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 rounded-full bg-blue-100">
+              <Image
+                src="/icon/workshop.png"
+                alt="Workshop"
+                width={20}
+                height={20}
+                className="w-5 h-5"
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">อบรมปรับเปลี่ยนพฤติกรรม</h2>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                <span className="text-gray-700">อบรมกลุ่มเสี่ยง</span>
+              </div>
+              <span className="font-bold text-blue-700">{formatNumber(totalRiskTrained)} คน</span>
+            </div>
+
+            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+              <div className="flex items-center">
+                <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                <span className="text-gray-700">กลับเป็นปกติ</span>
+              </div>
+              <span className="font-bold text-green-700">{formatNumber(totalRiskToNormal)} คน</span>
+            </div>
+          </div>
+        </div>
+
+        {/* น้ำหนักลดลง Summary Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 rounded-full bg-purple-100">
+              <Image
+                src="/icon/bw-scale.png"
+                alt="Weight Scale"
+                width={20}
+                height={20}
+                className="w-5 h-5"
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">น้ำหนักลดลง</h2>
+          </div>
+
+          <div className="space-y-3">
+            {/* Row 1: 0-1 กก. และ 1-2 กก. */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-indigo-400 mr-2"></div>
+                  <span className="text-gray-700 text-sm">0-1 กก.</span>
+                </div>
+                <span className="font-bold text-indigo-600 text-sm">{formatNumber(totalWeightReduced01)} คน</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                  <span className="text-gray-700 text-sm">1-2 กก.</span>
+                </div>
+                <span className="font-bold text-blue-600 text-sm">{formatNumber(totalWeightReduced12)} คน</span>
+              </div>
+            </div>
+
+            {/* Row 2: 2-3 กก. และ 3-4 กก. */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                  <span className="text-gray-700 text-sm">2-3 กก.</span>
+                </div>
+                <span className="font-bold text-green-600 text-sm">{formatNumber(totalWeightReduced23)} คน</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>
+                  <span className="text-gray-700 text-sm">3-4 กก.</span>
+                </div>
+                <span className="font-bold text-orange-600 text-sm">{formatNumber(totalWeightReduced34)} คน</span>
+              </div>
+            </div>
+
+            {/* Row 3: 4-5 กก. และ >5 กก. */}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                  <span className="text-gray-700 text-sm">4-5 กก.</span>
+                </div>
+                <span className="font-bold text-red-600 text-sm">{formatNumber(totalWeightReduced45)} คน</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-purple-600 mr-2"></div>
+                  <span className="text-gray-700 text-sm">{'>'} 5 กก.</span>
+                </div>
+                <span className="font-bold text-purple-700 text-sm">{formatNumber(totalWeightReducedOver5)} คน</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-dashed border-gray-400">
           <thead className="bg-gray-50">

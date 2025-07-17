@@ -30,8 +30,8 @@ export default function CarbAmpPage() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<CarbAmp>>({});
-  const [sortField, setSortField] = useState<SortField>("percentage");
-  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
+  const [sortField, setSortField] = useState<SortField>("amp_code");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [editingCell, setEditingCell] = useState<{
     id: string;
     field: "person_target" | "person_carb";
@@ -200,39 +200,64 @@ export default function CarbAmpPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">ผลงานนับคาร์บ</h1>
 
-      <div className="overflow-x-auto">
-        <div>
-          <div className="mb-6">
-            <div
-              className="bg-white p-4 border border-gray-200 rounded-md w-full overflow-x-auto"
-              style={{ minHeight: "300px" }}
-            >
+      {/* Carb Percentage Results Card */}
+      <div className="mb-6">
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 rounded-full bg-blue-100">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">ร้อยละผลการนับคาร์บ</h2>
+          </div>
+
+          {loading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
+          ) : (
+            <div className="bg-gray-50 p-4 border border-gray-200 rounded-md w-full overflow-x-auto" style={{ minHeight: "300px" }}>
               <div className="flex items-end min-w-max" style={{ height: 'calc(100% - 40px)' }}>
-                {sortedData.slice(0, 10).map((item, index) => (
-                  <div
-                    key={item.amp_code}
-                    className="flex flex-col items-center h-full px-1 sm:px-2"
-                    style={{ width: '10%', minWidth: '60px' }}
-                  >
-                    <div className="text-xs font-medium mb-1 text-center w-full truncate">
-                      {item.percentage.toFixed(1)}%
-                    </div>
-                    <div
-                      className="bg-green-500 w-10/12 sm:w-4/5 mx-auto rounded-t-sm hover:bg-green-600 transition-colors"
-                      style={{
-                        height: `${(item.percentage || 0) * 2}px`,
-                        maxHeight: "320px",
-                      }}
-                    ></div>
-                    <div className="mt-2 text-xs text-gray-600 truncate w-full text-center">
-                      {item.amp_name}
-                    </div>
-                  </div>
-                ))}
+                {[...sortedData]
+                  .sort((a, b) => b.percentage - a.percentage)
+                  .slice(0, 10)
+                  .map((item, index) => {
+                    const maxPercentage = Math.max(...data.map(d => d.percentage));
+                    const heightPercentage = maxPercentage > 0 ? (item.percentage / maxPercentage) * 100 : 0;
+
+                    return (
+                      <div
+                        key={item.amp_code}
+                        className="flex flex-col justify-end items-center h-full px-1 sm:px-2"
+                        style={{ width: '10%', minWidth: '60px' }}
+                      >
+                        <div className="text-xs font-medium mb-1 text-center w-full truncate text-green-600">
+                          {item.percentage.toFixed(1)}%
+                        </div>
+                        <div
+                          className="w-10/12 sm:w-4/5 mx-auto transition-colors"
+                          style={{
+                            backgroundColor: '#36e853',
+                            height: `${Math.max(heightPercentage * 2, 4)}px`,
+                            maxHeight: "200px",
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2dd149'}
+                          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#36e853'}
+                        ></div>
+                        <div className="mt-2 text-xs text-gray-600 truncate w-full text-center">
+                          {item.amp_name}
+                        </div>
+                      </div>
+                    );
+                  })}
               </div>
             </div>
-          </div>
+          )}
         </div>
+      </div>
+
+      <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -278,9 +303,8 @@ export default function CarbAmpPage() {
             {sortedData.map((item, index) => (
               <tr
                 key={item.id}
-                className={`${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                } hover:bg-blue-50 transition-colors duration-150`}
+                className={`${index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  } hover:bg-blue-50 transition-colors duration-150`}
               >
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {item.amp_code}
@@ -290,7 +314,7 @@ export default function CarbAmpPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {editingCell?.id === item.amp_code &&
-                  editingCell?.field === "person_target" ? (
+                    editingCell?.field === "person_target" ? (
                     <input
                       type="number"
                       defaultValue={item.person_target}
@@ -327,7 +351,7 @@ export default function CarbAmpPage() {
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {editingCell?.id === item.amp_code &&
-                  editingCell?.field === "person_carb" ? (
+                    editingCell?.field === "person_carb" ? (
                     <input
                       type="number"
                       defaultValue={item.person_carb}
