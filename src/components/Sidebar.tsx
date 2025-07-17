@@ -15,7 +15,14 @@ const Sidebar = () => {
   };
 
   const isActive = (path: string) => {
-    return pathname === path || pathname.startsWith(path);
+    // For the root path, only match exactly
+    if (path === '/') {
+      return pathname === path;
+    }
+    // For other paths, match if the pathname starts with the path and is followed by a slash or the end of the string
+    return pathname === path || 
+           (pathname.startsWith(path) && 
+            (pathname[path.length] === '/' || pathname.length === path.length));
   };
 
   const menuItems = [
