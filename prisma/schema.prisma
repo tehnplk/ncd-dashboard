@@ -7,22 +7,6 @@ datasource db {
   url      = "file:../database/ncd.db"
 }
 
-model Carb {
-  id            Int      @id @default(autoincrement())
-  hoscode       String   @unique
-  hosname       String
-  hostype       String
-  tmb_code      String
-  tmb_name      String
-  amp_code      String
-  amp_name      String
-  person_target Float
-  person_carb   Float
-  percentage    Float
-  person_diff   Float
-  updated_at    DateTime @default(now())
-}
-
 model Camp {
   id         Int      @id @default(autoincrement())
   amp_code   String   @unique
@@ -43,58 +27,6 @@ model Chospital {
   updated_at    DateTime @default(now())
 
   @@index([hoscode])
-}
-
-model Prevention {
-  id                Int      @id @default(autoincrement())
-  hoscode           String   @unique
-  hosname           String
-  hostype           String
-  tmb_code          String
-  tmb_name          String
-  amp_code          String
-  amp_name          String
-  total_officer     Int
-  total_pop         Int
-  osm_provider      Int
-  officer_provider  Int
-  target_pop        Int
-  prevention_visit  Int
-  normal_pop        Int
-  risk_pop          Int
-  sick_pop          Int
-  trained           Int
-  risk_to_normal    Int
-  weight_reduce     Float
-  weight_reduce_avg Float
-  updated_at        DateTime @default(now())
-}
-
-model Remission {
-  id                   Int    @id @default(autoincrement())
-  hoscode              String @unique
-  hosname              String
-  hostype              String
-  tmb_code             String
-  tmb_name             String
-  amp_code             String
-  amp_name             String
-  trained              Int
-  ncds_remission       Int
-  stopped_medication   Int
-  reduced_1            Int
-  reduced_2            Int
-  reduced_3            Int
-  reduced_4            Int
-  reduced_5            Int
-  reduced_6            Int
-  reduced_7            Int
-  reduced_8            Int
-  reduced_n            Int
-  same_medication      Int
-  increased_medication Int
-  pending_evaluation   Int
-  lost_followup        Int
 }
 
 model CarbAmp {
@@ -134,25 +66,24 @@ model RemissionAmp {
 model PreventionAmp {
   id                    Int      @id @default(autoincrement())
   amp_code              String   @unique // รหัสอำเภอ
-  amp_name              String            // ชื่ออำเภอ
-  total_volunteers      Int               // จำนวนอสม.
-  volunteers_registered Int               // จำนวนอสม.ที่สมัคร Provider ID
-  volunteers_percentage Float             // ร้อยละ (อสม.)
-  total_personnel       Int               // จำนวนบุคลากร
-  personnel_registered  Int               // จำนวนบุคลากรที่สมัคร Provider ID
-  personnel_percentage  Float             // ร้อยละ (บุคลากร)
-  service_recipients    Int               // ผู้เข้ารับบริการ
-  normal_population     Int               // ปชก.กลุ่มปกติ
-  risk_population       Int               // ปชก.กลุ่มเสี่ยง
-  sick_population       Int               // ปชก.กลุ่มป่วย
-  risk_trained          Int               // จำนวนปชก.กลุ่มเสี่ยงที่เข้ารับการอบรมปรับเปลี่ยนพฤติกรรม (คน)
-  risk_to_normal        Int               // จำนวนปชก.กลุ่มเสี่ยงที่เข้ารับการอบรมสามารถเปลี่ยนเป็นกลุ่มปกติ
-  weight_reduced_0_1    Int               // ลด น.น.ได้ 0 - 1 kg
-  weight_reduced_1_2    Int               // ลด น.น.ได้ 1 - 2 kg
-  weight_reduced_2_3    Int               // ลด น.น.ได้ 2 - 3 kg
-  weight_reduced_3_4    Int               // ลด น.น.ได้ 3 - 4 kg
-  weight_reduced_4_5    Int               // ลด น.น.ได้ 4 - 5 kg
-  weight_reduced_over_5 Int               // ลด น.น.ได้ มากกว่า 5 kg
+  amp_name              String // ชื่ออำเภอ
+  total_volunteers      Int // จำนวนอสม.
+  volunteers_registered Int // จำนวนอสม.ที่สมัคร Provider ID
+  volunteers_percentage Float // ร้อยละ (อสม.)
+  total_personnel       Int // จำนวนบุคลากร
+  personnel_registered  Int // จำนวนบุคลากรที่สมัคร Provider ID
+  personnel_percentage  Float // ร้อยละ (บุคลากร)
+  service_recipients    Int // ผู้เข้ารับบริการ
+  normal_population     Int // ปชก.กลุ่มปกติ
+  risk_population       Int // ปชก.กลุ่มเสี่ยง
+  sick_population       Int // ปชก.กลุ่มป่วย
+  risk_trained          Int // จำนวนปชก.กลุ่มเสี่ยงที่เข้ารับการอบรมปรับเปลี่ยนพฤติกรรม (คน)
+  risk_to_normal        Int // จำนวนปชก.กลุ่มเสี่ยงที่เข้ารับการอบรมสามารถเปลี่ยนเป็นกลุ่มปกติ
+  weight_reduced_0_1    Int // ลด น.น.ได้ 0 - 1 kg
+  weight_reduced_1_2    Int // ลด น.น.ได้ 1 - 2 kg
+  weight_reduced_2_3    Int // ลด น.น.ได้ 2 - 3 kg
+  weight_reduced_3_4    Int // ลด น.น.ได้ 3 - 4 kg
+  weight_reduced_4_5    Int // ลด น.น.ได้ 4 - 5 kg
+  weight_reduced_over_5 Int // ลด น.น.ได้ มากกว่า 5 kg
   updated_at            DateTime @default(now()) // วันที่ปรับปรุงข้อมูล
 }
-

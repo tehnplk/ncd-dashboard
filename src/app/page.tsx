@@ -1,370 +1,303 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { FiUsers, FiActivity, FiCheckCircle, FiAlertCircle, FiAlertTriangle, FiAward, FiBarChart2, FiFileText, FiUser, FiPlus, FiX } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
 
-interface SubDistrictData {
-  name: string;     // ชื่ออำเภอ
-  value: number;    // ค่าคาร์บ
-  percentage: number; // ร้อยละ
+interface CarbData {
+  success: boolean;
+  data: {
+    total_target: number;
+    total_carb: number;
+    percentage: number;
+  }
 }
 
-interface SummaryData {
-  carbPercentage: number;
-  screenedPercentage: number;
-  normalCount: number;
-  riskCount: number;
-  sickCount: number;
-  trainedCount: number;
-  trainedPercentage: number;
-  // New metrics
-  recoveredCount: number;
-  totalWeightLoss: number;
-  avgWeightLoss: number;
-  stoppedMedication: number; // จำนวนผู้ป่วยที่หยุดยาได้
-  subDistricts: SubDistrictData[]; // ข้อมูลรายอำเภอ
+interface PreventionData {
+  success: boolean;
+  data: {
+    total_volunteers: number;
+    volunteers_registered: number;
+    volunteers_percentage: number;
+    total_personnel: number;
+    personnel_registered: number;
+    personnel_percentage: number;
+    service_recipients: number;
+    normal_population: number;
+    risk_population: number;
+    sick_population: number;
+    // Add other fields if needed
+  }
+}
+
+interface RemissionData {
+  success: boolean;
+  data: {
+    total_ncds_remission: number;
+    total_stopped_medication: number;
+    total_reduced_1: number;
+    total_reduced_2: number;
+    total_reduced_3: number;
+    total_reduced_4: number;
+    total_reduced_5: number;
+    total_reduced_6: number;
+    total_reduced_7: number;
+    total_reduced_8: number;
+    total_reduced_n: number;
+    total_same_medication: number;
+    total_increased_medication: number;
+    total_pending_evaluation: number;
+    total_lost_followup: number;
+  }
 }
 
 export default function Dashboard() {
-  const [loading, setLoading] = useState(true);
-  const [summary, setSummary] = useState<SummaryData | null>(null);
+  const [carbData, setCarbData] = useState<CarbData | null>(null);
+  const [preventionData, setPreventionData] = useState<PreventionData | null>(null);
+  const [remissionData, setRemissionData] = useState<RemissionData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Mock data - in a real app, you would fetch this from your API
-    const fetchSummaryData = async () => {
+    const fetchData = async () => {
       try {
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        setIsLoading(true);
         
-        // Mock data - replace with actual API call
-        const mockData: SummaryData = {
-          carbPercentage: 78.5,
-          screenedPercentage: 85.2,
-          normalCount: 12540,
-          riskCount: 8560,
-          sickCount: 3200,
-          trainedCount: 7500,
-          trainedPercentage: 65.8,
-          // New mock data
-          recoveredCount: 1240,
-          totalWeightLoss: 3250.5,
-          avgWeightLoss: 2.6,
-          stoppedMedication: 850, // จำนวนผู้ป่วยที่หยุดยาได้
-          subDistricts: [
-            { name: 'เมืองพิษณุโลก', value: 88.5, percentage: 16.2 },
-            { name: 'นครไทย', value: 85.7, percentage: 15.8 },
-            { name: 'ชาติตระการ', value: 84.2, percentage: 15.5 },
-            { name: 'บางระกำ', value: 82.9, percentage: 15.2 },
-            { name: 'บางกระทุ่ม', value: 81.5, percentage: 14.9 },
-            { name: 'วัดโบสถ์', value: 80.1, percentage: 14.6 },
-            { name: 'วังทอง', value: 78.8, percentage: 14.3 },
-            { name: 'เนินมะปราง', value: 77.4, percentage: 14.0 },
-            { name: 'ชาติตระการ', value: 76.2, percentage: 13.8 }
-          ]
-        };
-        
-        setSummary(mockData);
+        // Fetch all data in parallel
+        const endpoints = [
+          { name: 'carb', url: '/api/sum/carb' },
+          { name: 'prevention', url: '/api/sum/prevention' },
+          { name: 'remission', url: '/api/sum/remission' }
+        ];
+
+        // Define a type for the API response
+        type ApiResponse = 
+          | { name: string; data: any; error?: never }
+          | { name: string; error: string; data?: never };
+
+        const responses: ApiResponse[] = await Promise.all(
+          endpoints.map(async ({ name, url }) => {
+            try {
+              const res = await fetch(url);
+              if (!res.ok) {
+                throw new Error(`Failed to fetch ${name}: ${res.status} ${res.statusText}`);
+              }
+              const data = await res.json();
+              console.log(`${name} response:`, data);
+              return { name, data };
+            } catch (error) {
+              const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+              console.error(`Error fetching ${name}:`, errorMessage);
+              return { name, error: errorMessage };
+            }
+          })
+        );
+
+        // Check for any errors
+        const errors = responses.filter((r): r is { name: string; error: string } => 'error' in r);
+        if (errors.length > 0) {
+          throw new Error(`Failed to load data: ${errors.map(e => e.error).join(', ')}`);
+        }
+
+        // Set data from successful responses
+        const responseMap = Object.fromEntries(
+          responses
+            .filter((r): r is { name: string; data: any } => 'data' in r)
+            .map(({ name, data }) => [name, data])
+        );
+
+        console.log('All API responses:', responseMap);
+
+        setCarbData(responseMap.carb);
+        setPreventionData(responseMap.prevention);
+        setRemissionData(responseMap.remission);
+        setError(null);
       } catch (err) {
-        setError('Failed to load summary data');
-        console.error('Error:', err);
+        console.error('Error fetching data:', err);
+        setError('Failed to load data. Please try again later.');
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
-    fetchSummaryData();
+    fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {error}
-        </div>
-      </div>
-    );
-  }
-
-  if (!summary) return null;
-
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat('th-TH').format(num);
+  };
   return (
-    <>
-      {/* Mockup placeholder */}
-      <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6">
+      <h1 className="text-2xl font-bold text-center mb-8">คนไทยห่างไกล NCDs จังหวัดพิษณุโลก</h1>
       
-      {/* Summary Cards */}
-      {/* กลับเป็นปกติ, น้ำหนัดรวมลดลง(กก) ,นำหนักลดลงเฉลี่ย(คน/กก) */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        {/* นับคาร์บ(%) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* นับคาร์บ Card */}
         <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-blue-100 text-blue-600 text-xl mr-2">
-                <Image src="/icon/rice.png" alt="Rice" width={24} height={24} />
-              </div>
-              <p className="text-gray-500 text-lg font-bold">นับคาร์บ</p>
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 rounded-full bg-blue-100">
+              <Image 
+                src="/icon/rice.png" 
+                alt="Rice" 
+                width={20} 
+                height={20} 
+                className="w-5 h-5"
+              />
             </div>
-            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">{summary.carbPercentage}%</p>
-          </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {summary.subDistricts.map((district, index) => (
-                <div key={index} className="bg-gray-50 p-2 rounded text-center">
-                  <p className="text-xs text-gray-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1">{district.value}%</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* คัดกรอง(%) */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-green-100 text-green-600 text-xl mr-2 relative">
-                <Image src="/icon/medical-report.png" alt="Medical Report" width={24} height={24} />
-              </div>
-              <p className="text-gray-500 text-lg font-bold">คัดกรอง</p>
-            </div>
-            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">{summary.screenedPercentage}%</p>
-          </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {summary.subDistricts.map((district, index) => (
-                <div key={`screened-${index}`} className="bg-gray-50 p-2 rounded text-center">
-                  <p className="text-xs text-gray-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1">{district.percentage}%</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ผลการคัดกรอง Section - Vertical Layout */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-gray-600 text-lg font-bold">ผลการคัดกรอง</p>
-            </div>
-            <div className="p-2 rounded-full bg-purple-100 text-purple-600">
-              <FiFileText size={20} />
-            </div>
-          </div>
-          <div className="space-y-3">
-            {/* ปกติ */}
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-emerald-500 mr-3"></div>
-                <span className="text-lg font-medium text-gray-800">ปกติ</span>
-              </div>
-              <span className="font-bold text-lg">{summary.normalCount.toLocaleString()}</span>
-            </div>
-
-            {/* เสี่ยง */}
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-yellow-500 mr-3"></div>
-                <span className="text-lg font-medium text-gray-800">เสี่ยง</span>
-              </div>
-              <span className="font-bold text-lg">{summary.riskCount.toLocaleString()}</span>
-            </div>
-
-            {/* ป่วย */}
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
-              <div className="flex items-center">
-                <div className="w-4 h-4 rounded-full bg-red-500 mr-3"></div>
-                <span className="text-lg font-medium text-gray-800">ป่วย</span>
-              </div>
-              <span className="font-bold text-lg">{summary.sickCount.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Metrics Row - 3 Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
-        {/* อบรมปรับเปลี่ยนพฤติกรรม(คน) */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-indigo-500">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-indigo-100 text-indigo-600 text-xl mr-2">
-                <Image src="/icon/workshop.png" alt="Workshop" width={24} height={24} />
-              </div>
-              <p className="text-gray-500 text-lg font-bold">อบรมปรับเปลี่ยนพฤติกรรม</p>
-            </div>
-            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
-              {summary.trainedCount.toLocaleString()} <span className="text-lg">คน</span>
-            </p>
-          </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {summary.subDistricts.map((district, index) => (
-                <div key={`trained-${index}`} className="bg-indigo-50 p-2 rounded text-center">
-                  <p className="text-xs text-indigo-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1 text-indigo-800">{Math.floor(district.value)}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        
-        {/* กลับเป็นปกติ(คน) */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-teal-500">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-teal-100 text-teal-600 text-xl mr-2">
-                <Image src="/icon/person-check.png" alt="Person Check" width={24} height={24} />
-              </div>
-              <p className="text-gray-500 text-lg font-bold">กลับเป็นปกติ</p>
-            </div>
-            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
-              {summary.recoveredCount.toLocaleString()} <span className="text-lg">คน</span>
-            </p>
-          </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {summary.subDistricts.map((district, index) => (
-                <div key={`recovered-${index}`} className="bg-teal-50 p-2 rounded text-center">
-                  <p className="text-xs text-teal-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1 text-teal-800">{Math.floor(district.value)}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        
-        {/* น้ำหนักลดลง */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-amber-500">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-amber-100 text-amber-600 text-xl mr-2">
-                <Image src="/icon/bw-scale.png" alt="Weight Scale" width={24} height={24} />
-              </div>
-              <p className="text-gray-600 text-lg font-bold">น้ำหนักลดลง</p>
-            </div>
+            <h2 className="text-xl font-bold text-gray-800">นับคาร์บ</h2>
           </div>
           
-          <div className="grid grid-cols-2 gap-4">
-            {/* รวม */}
-            <div className="bg-amber-50 p-3 rounded-lg">
-              <p className="text-amber-600 text-sm font-medium">รวม</p>
-              <p className="text-2xl font-bold mt-1 bg-gray-100 p-2 rounded">
-                {summary.totalWeightLoss.toLocaleString()} <span className="text-base">กก.</span>
-              </p>
+          {isLoading ? (
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
             </div>
-            
-            {/* เฉลี่ย */}
-            <div className="bg-amber-50 p-3 rounded-lg">
-              <p className="text-amber-600 text-sm font-medium">เฉลี่ย</p>
-              <p className="text-2xl font-bold mt-1 bg-gray-100 p-2 rounded">
-                {summary.avgWeightLoss.toFixed(1)} <span className="text-base">กก./คน</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Medication Status Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-        {/* จำนวนผู้ป่วยที่รับยาเท่าเดิม */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-blue-100 text-blue-600 text-xl mr-2">
-                <FiCheckCircle size={18} />
+          ) : error ? (
+            <div className="text-red-500 text-center py-4">{error}</div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">เป้าหมาย</span>
+                <span className="font-medium">{formatNumber(carbData?.data?.total_target || 0)} คน</span>
               </div>
-              <p className="text-gray-500 text-lg font-bold">จำนวนผู้ป่วยที่รับยาเท่าเดิม</p>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">นับคาร์บ</span>
+                <span className="font-medium">{formatNumber(carbData?.data?.total_carb || 0)} คน</span>
+              </div>
+              
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">ร้อยละ</span>
+                <span className="text-2xl font-bold text-green-600">
+                  {isLoading ? '...' : `${carbData?.data?.percentage?.toFixed(2) || '0.00'}%`}
+                </span>
+              </div>
+              
+              {/* Progress bar */}
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div 
+                  className="bg-blue-500 h-2.5 rounded-full" 
+                  style={{ width: `${carbData?.data?.percentage || 0}%` }}
+                ></div>
+              </div>
             </div>
-            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
-              {Math.floor(summary.sickCount * 0.6).toLocaleString()} <span className="text-lg">คน</span>
-            </p>
-          </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {summary.subDistricts.map((district, index) => (
-                <div key={`same-meds-${index}`} className="bg-blue-50 p-2 rounded text-center">
-                  <p className="text-xs text-blue-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1 text-blue-800">
-                    {Math.floor(district.value * 0.6)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* จำนวนผู้ป่วยที่ต้องเพิ่มยา */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-orange-100 text-orange-600 text-xl mr-2">
-                <FiPlus size={18} />
+        {/* คัดกรอง NCDs Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-full bg-green-100">
+                <Image 
+                  src="/icon/medical-report.png" 
+                  alt="Medical Report" 
+                  width={20} 
+                  height={20} 
+                  className="w-5 h-5"
+                />
               </div>
-              <p className="text-gray-500 text-lg font-bold">จำนวนผู้ป่วยที่ต้องเพิ่มยา</p>
+              <h2 className="text-xl font-bold text-gray-800">คัดกรอง NCDs</h2>
             </div>
-            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
-              {Math.floor(summary.sickCount * 0.4).toLocaleString()} <span className="text-lg">คน</span>
-            </p>
+            <span className="text-2xl font-bold text-green-600">
+              {isLoading ? '...' : formatNumber(preventionData?.data?.service_recipients || 0)} คน
+            </span>
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {summary.subDistricts.map((district, index) => (
-                <div key={`increase-meds-${index}`} className="bg-orange-50 p-2 rounded text-center">
-                  <p className="text-xs text-orange-600 truncate">{district.name}</p>
-                  <p className="text-sm font-semibold mt-1 text-orange-800">
-                    {Math.floor(district.value * 0.4)}
-                  </p>
+          
+          {isLoading ? (
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500"></div>
+            </div>
+          ) : error ? (
+            <div className="text-red-500 text-center py-4">{error}</div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-emerald-500 mr-2"></div>
+                  <span className="text-gray-700">ปกติ</span>
                 </div>
-              ))}
+                <span className="font-medium">{formatNumber(preventionData?.data?.normal_population || 0)} คน</span>
+              </div>
+              
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                  <span className="text-gray-700">เสี่ยง</span>
+                </div>
+                <span className="font-medium">{formatNumber(preventionData?.data?.risk_population || 0)} คน</span>
+              </div>
+              
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                  <span className="text-gray-700">ป่วย</span>
+                </div>
+                <span className="font-medium">{formatNumber(preventionData?.data?.sick_population || 0)} คน</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* หยุดยา */}
-        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center">
-              <div className="p-1 rounded-full bg-red-100 text-red-600 text-xl mr-2">
-                <Image src="/icon/drug-abuse.png" alt="Drug Abuse" width={24} height={24} />
-              </div>
-              <p className="text-gray-500 text-lg font-bold">หยุดยา</p>
+        {/* คลินิก NCDs รักษาหาย Card */}
+        <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="p-1.5 rounded-full bg-purple-100">
+              <Image 
+                src="/icon/remission.png" 
+                alt="Remission" 
+                width={20} 
+                height={20} 
+                className="w-5 h-5"
+              />
             </div>
-            <p className="text-3xl font-bold bg-gray-100 p-2 rounded">
-              {summary.stoppedMedication.toLocaleString()} <span className="text-lg">คน</span>
-            </p>
+            <h2 className="text-xl font-bold text-gray-800">คลินิก NCDs รักษาหาย</h2>
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <div className="grid grid-cols-3 gap-2">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
-                <div key={`stop-${num}`} className="bg-red-50 p-2 rounded text-center">
-                  <p className="text-xs text-red-600">หยุด {num} ตัว</p>
-                  <p className="text-sm font-semibold mt-1 text-red-800">
-                    {Math.floor(summary.stoppedMedication * (0.1 * (10 - num))).toLocaleString()}
-                  </p>
+          
+          {isLoading ? (
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
+            </div>
+          ) : error ? (
+            <div className="text-red-500 text-center py-4">{error}</div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-purple-500 mr-2"></div>
+                  <span className="text-gray-700">ผู้ป่วยเข้าเกณฑ์</span>
                 </div>
-              ))}
-              <div className="bg-red-50 p-2 rounded text-center">
-                <p className="text-xs text-red-600">หยุด &gt;8 ตัว</p>
-                <p className="text-sm font-semibold mt-1 text-red-800">
-                  {Math.floor(summary.stoppedMedication * 0.1).toLocaleString()}
-                </p>
+                <span className="font-medium">{formatNumber(remissionData?.data?.total_ncds_remission || 0)} คน</span>
+              </div>
+              
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+                  <span className="text-gray-700">หยุดยาได้</span>
+                </div>
+                <span className="font-medium">{formatNumber(remissionData?.data?.total_stopped_medication || 0)} คน</span>
+              </div>
+              
+              <div className="flex justify-between items-center p-3 bg-gray-50 rounded border border-gray-100">
+                <div className="flex items-center">
+                  <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+                  <span className="text-gray-700">ลดยาลง</span>
+                </div>
+                <span className="font-medium">
+                  {formatNumber(
+                    (remissionData?.data?.total_reduced_1 || 0) +
+                    (remissionData?.data?.total_reduced_2 || 0) +
+                    (remissionData?.data?.total_reduced_3 || 0) +
+                    (remissionData?.data?.total_reduced_4 || 0) +
+                    (remissionData?.data?.total_reduced_5 || 0) +
+                    (remissionData?.data?.total_reduced_6 || 0) +
+                    (remissionData?.data?.total_reduced_7 || 0) +
+                    (remissionData?.data?.total_reduced_8 || 0) +
+                    (remissionData?.data?.total_reduced_n || 0)
+                  )} คน
+                </span>
               </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
-    </>
   );
 }
