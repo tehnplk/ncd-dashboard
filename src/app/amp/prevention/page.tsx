@@ -107,18 +107,18 @@ export default function PreventionAmpPage() {
       
       // Auto-calculate percentages when related fields are updated
       if (field === 'total_volunteers' || field === 'volunteers_registered') {
-        if (field === 'total_volunteers' && updatedItem.total_volunteers > 0) {
+        if (updatedItem.total_volunteers > 0) {
           updatedItem.volunteers_percentage = (updatedItem.volunteers_registered / updatedItem.total_volunteers) * 100
-        } else if (field === 'volunteers_registered' && updatedItem.total_volunteers > 0) {
-          updatedItem.volunteers_percentage = (updatedItem.volunteers_registered / updatedItem.total_volunteers) * 100
+        } else {
+          updatedItem.volunteers_percentage = 0.00
         }
       }
       
       if (field === 'total_personnel' || field === 'personnel_registered') {
-        if (field === 'total_personnel' && updatedItem.total_personnel > 0) {
+        if (updatedItem.total_personnel > 0) {
           updatedItem.personnel_percentage = (updatedItem.personnel_registered / updatedItem.total_personnel) * 100
-        } else if (field === 'personnel_registered' && updatedItem.total_personnel > 0) {
-          updatedItem.personnel_percentage = (updatedItem.personnel_registered / updatedItem.total_personnel) * 100
+        } else {
+          updatedItem.personnel_percentage = 0.00
         }
       }
       
