@@ -6,6 +6,7 @@ export default function VisitCounter() {
     const [visitCount, setVisitCount] = useState(0)
     const [lastVisit, setLastVisit] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
+    const [isVisible, setIsVisible] = useState(true)
 
     const formatLastVisit = (timestamp: string | null) => {
         if (!timestamp) return 'ไม่มีข้อมูล'
@@ -70,6 +71,17 @@ export default function VisitCounter() {
         incrementVisitCount()
     }, [])
 
+    // Fade out after 3 seconds
+    useEffect(() => {
+        if (!loading) {
+            const timer = setTimeout(() => {
+                setIsVisible(false)
+            }, 4000)
+
+            return () => clearTimeout(timer)
+        }
+    }, [loading])
+
     if (loading) {
         return (
             <div className="fixed top-2 right-4 z-50">
@@ -86,7 +98,7 @@ export default function VisitCounter() {
     }
 
     return (
-        <div className="fixed top-2 right-4 z-50">
+        <div className={`fixed top-2 right-4 z-50 transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
             <div className="bg-white/80 backdrop-blur-sm border border-gray-200 rounded-lg px-3 py-2 shadow-sm">
                 <div className="text-xs text-gray-600 font-medium">
                     เข้าชม: <span className="text-blue-600 font-semibold">{visitCount.toLocaleString()}</span>
