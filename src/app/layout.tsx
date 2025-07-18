@@ -5,6 +5,7 @@ import { StagewiseToolbar } from "@stagewise/toolbar-next";
 import ReactPlugin from "@stagewise-plugins/react";
 import Sidebar from "../components/Sidebar";
 import { AuthProvider } from "../contexts/AuthContext";
+import VisitCounter from "../components/VisitCounter";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
+          <VisitCounter />
+          
           <div className="flex min-h-screen">
             <Sidebar />
             <main className="flex-1 bg-gray-50">
